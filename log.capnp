@@ -1276,6 +1276,81 @@ struct UbloxGnss {
   }
 }
 
+struct NavInstruction {
+  maneuverPrimaryText @0 :Text;
+  maneuverSecondaryText @1 :Text;
+  maneuverDistance @2 :Float32;  # m
+  maneuverType @3 :Text; # TODO: Make Enum
+  maneuverModifier @4 :Text; # TODO: Make Enum
+
+  distanceRemaining @5 :Float32; # m
+  timeRemaining @6 :Float32; # s
+  timeRemainingTypical @7 :Float32; # s
+
+  lanes @8 :List(Lane);
+  showFull @9 :Bool;
+
+  speedLimit @10 :Float32; # m/s
+  speedLimitSign @11 :SpeedLimitSign;
+
+  struct Lane {
+    directions @0 :List(Direction);
+    active @1 :Bool;
+    activeDirection @2 :Direction;
+  }
+
+  enum Direction {
+    none @0;
+    left @1;
+    right @2;
+    straight @3;
+  }
+
+  enum SpeedLimitSign {
+    mutcd @0; # US Style
+    vienna @1; # EU Style
+    }
+}
+
+struct NavRoute {
+  coordinates @0 :List(Coordinate);
+
+  struct Coordinate {
+    latitude @0 :Float32;
+    longitude @1 :Float32;
+  }
+}
+
+struct MapRenderState {
+  locationMonoTime @0 :UInt64;
+  renderTime @1 :Float32;
+  frameId @2: UInt32;
+}
+
+struct NavModelData {
+  frameId @0 :UInt32;
+  modelExecutionTime @1 :Float32;
+  dspExecutionTime @2 :Float32;
+  features @3 :List(Float32);
+  # predicted future position
+  position @4 :XYData;
+  desirePrediction @5 :List(Float32);
+
+  # All SI units and in device frame
+  struct XYData {
+    x @0 :List(Float32);
+    y @1 :List(Float32);
+    xStd @2 :List(Float32);
+    yStd @3 :List(Float32);
+  }
+}
+
+struct Thumbnail {
+  frameId @0 :UInt32;
+  timestampEof @1 :UInt64;
+  thumbnail @2 :Data;
+}
+
 struct Event {
   logMonoTime @33 :UInt64;  # nanoseconds
   valid @34 :Bool = true;
@@ -1324,5 +1399,11 @@ struct Event {
     gyroscope2 @42 :SensorEventData;
     accelerometer2 @43 :SensorEventData;
     gpsLocation @44 :GpsLocationData;
+
+    # navigation
+    navInstruction @45 :NavInstruction;
+    navRoute @46 :NavRoute;
+    navThumbnail @47: Thumbnail;
+    mapRenderState @48: MapRenderState;
   }
 }
