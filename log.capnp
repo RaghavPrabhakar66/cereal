@@ -1405,5 +1405,6 @@ struct Event {
     navRoute @46 :NavRoute;
     navThumbnail @47: Thumbnail;
     mapRenderState @48: MapRenderState;
+    navModel @49: NavModelData;
   }
 }
